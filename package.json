@@ -2,9 +2,10 @@
   "name": "pi-lights",
   "version": "0.0.1",
   "description": "Control individually addressable LED strips with a raspberry pi",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run test:lint",
+    "test:lint": "eslint src/*.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,13 @@
   "bugs": {
     "url": "https://github.com/jeremyroberts0/pi-lights/issues"
   },
-  "homepage": "https://github.com/jeremyroberts0/pi-lights"
+  "homepage": "https://github.com/jeremyroberts0/pi-lights",
+  "dependencies": {
+    "restify": "^6.3.4"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0"
+  }
 }
