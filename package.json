@@ -4,6 +4,7 @@
   "description": "Control individually addressable LED strips with a raspberry pi",
   "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "npm run test:lint",
     "test:lint": "eslint src/*.js"
   },
@@ -18,7 +19,8 @@
   },
   "homepage": "https://github.com/jeremyroberts0/pi-lights",
   "dependencies": {
-    "restify": "^6.3.4"
+    "restify": "^6.3.4",
+    "simple-node-logger": "^0.93.33"
   },
   "devDependencies": {
     "eslint": "^4.12.0",
