@@ -22,6 +22,7 @@
   "homepage": "https://github.com/jeremyroberts0/pi-lights",
   "dependencies": {
     "restify": "^6.3.4",
+    "rpi-ws2801": "^0.0.4",
     "simple-node-logger": "^0.93.33"
   },
   "devDependencies": {
