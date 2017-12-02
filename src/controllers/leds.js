@@ -4,7 +4,7 @@ const config = require('../config')
 let animationInterval
 
 const connected = leds.connect(config.LED_COUNT)
-if (!connected && process.env.NODE_ENV !== 'development') throw new Error('Failed to connect to LEDs')
+if (connected === false && process.env.NODE_ENV !== 'development') throw new Error('Failed to connect to LEDs')
 
 const forAllChannels = (cb) => {
     for (let channel = 0; channel < config.LED_COUNT * 3; channel += 1) {
