@@ -5,6 +5,11 @@ const config = require('./config')
 const infoController = require('./controllers/info')
 const ledController = require('./controllers/leds')
 
+const leds = require('./leds')
+
+// Set to yellow while starting up
+leds.setSolidColor([255, 255, 0])
+
 const server = restify.createServer()
 const logLevel = (process.env.LOG_LEVEL || 'info').toLowerCase()
 
@@ -27,4 +32,7 @@ server.post(`${ledBasePath}/rainbow`, ledController.rainbow)
 
 server.listen(port, () => {
     log.info(`Server listening on port ${port}`)
+
+    // Fade green to white once started
+    leds.setSolidColor([0, 255, 0], [255, 255, 255], 5000)
 })
