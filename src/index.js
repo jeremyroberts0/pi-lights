@@ -18,8 +18,13 @@ log.setLevel(logLevel)
 const port = config.PORT
 const basePath = config.BASE_PATH
 const ledBasePath = config.LED_BASE_PATH
+
 // Middleware
 server.use(restify.plugins.jsonBodyParser())
+server.pre((req, res, next) => {
+    log.info(`Incoming Request: ${req.method} - ${req.url}`)
+    next()
+})
 
 // Info Route
 server.get(`${basePath}/info`, infoController)
