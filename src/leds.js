@@ -128,6 +128,32 @@ module.exports.rainbow = () => {
     }, 2)
 }
 
+const xmasColors = [
+    [255, 0, 0],
+    [0, 255, 0],
+    [255, 255, 255],
+]
+
+module.exports.xmas = () => {
+    clearInterval(animationInterval)
+    let nextColorIndex = 0
+    const rgbState = []
+
+    forAllLeds((led) => {
+        rgbState[led] = xmasColors[nextColorIndex]
+        nextColorIndex += 1
+        if (!xmasColors[nextColorIndex]) {
+            nextColorIndex = 0
+        }
+    })
+
+    animationInterval = setInterval(() => {
+        rgbState.push(rgbState.shift())
+        rgbState.forEach((color, index) => leds.setColor(index, color))
+        leds.update()
+    }, 1)
+}
+
 module.exports.reset = () => {
     clearInterval(animationInterval)
 
