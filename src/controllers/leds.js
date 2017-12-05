@@ -22,7 +22,6 @@ module.exports.setSolidColor = (req, res) => {
     clearInterval(animationInterval)
     const rgb = req.body
     leds.fill(...rgb)
-    leds.update()
     res.send(204)
 }
 
@@ -112,7 +111,7 @@ module.exports.rainbow = (req, res) => {
         rgbState.forEach((color, index) => leds.setColor(index, color))
         console.log('Rainbow:', JSON.stringify(rgbState))
         leds.update()
-    }, 25)
+    }, 2)
 
     res.send(204)
 }
