@@ -18,10 +18,12 @@ const forAllLeds = (cb) => {
     }
 }
 
-module.exports.setSolidColor = (rgb) => {
+const setSolidColor = (rgb) => {
     clearInterval(animationInterval)
     leds.fill(...rgb)
 }
+
+module.exports.setSolidColor = setSolidColor
 
 module.exports.setPattern = (pattern) => {
     clearInterval(animationInterval)
@@ -32,26 +34,30 @@ module.exports.setPattern = (pattern) => {
 }
 
 module.exports.fadeSolid = (firstColor, secondColor, duration) => {
+    // [0, 255, 255], [255,255,255]
     const deltas = [
         firstColor[0] - secondColor[0],
         firstColor[1] - secondColor[1],
         firstColor[2] - secondColor[2],
     ]
+    // [-255, 0, 0]
 
     const deltasPerTick = deltas.map(delta => delta / duration)
+
+    // -0.051
 
     clearInterval(animationInterval)
     let ticks = 0
     let previousColor = firstColor
     animationInterval = setInterval(() => {
         const nextColor = previousColor.map((c, i) => c - deltasPerTick[i])
-        this.setSolidColor(nextColor)
+        setSolidColor(nextColor)
         previousColor = nextColor
         ticks += 1
         if (ticks >= duration) {
             // All Done
             clearInterval(animationInterval)
-            this.setSolidColor(secondColor)
+            setSolidColor(secondColor)
         }
     }, 1)
 }
@@ -151,7 +157,7 @@ module.exports.xmas = () => {
         rgbState.push(rgbState.shift())
         rgbState.forEach((color, index) => leds.setColor(index, color))
         leds.update()
-    }, 1)
+    }, 750)
 }
 
 module.exports.reset = () => {

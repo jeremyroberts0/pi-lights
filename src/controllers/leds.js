@@ -19,6 +19,11 @@ module.exports.setPattern = (req, res) => {
     res.send(204)
 }
 
+module.exports.fade = (req, res) => {
+    leds.fadeSolid(req.body.first, req.body.second, req.body.duration)
+    res.send(204)
+}
+
 module.exports.rainbow = (req, res) => {
     leds.rainbow()
     res.send(204)
