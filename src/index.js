@@ -34,6 +34,7 @@ server.post(`${ledBasePath}/solid`, ledController.setSolidColor)
 server.post(`${ledBasePath}/pattern`, ledController.setPattern)
 server.post(`${ledBasePath}/reset`, ledController.reset)
 server.post(`${ledBasePath}/rainbow`, ledController.rainbow)
+server.post(`${ledBasePath}/xmas`, ledController.xmas)
 
 server.listen(port, () => {
     log.info(`Server listening on port ${port}`)

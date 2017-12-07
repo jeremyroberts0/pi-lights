@@ -24,6 +24,11 @@ module.exports.rainbow = (req, res) => {
     res.send(204)
 }
 
+module.exports.xmas = (req, res) => {
+    leds.xmas()
+    res.send(204)
+}
+
 module.exports.reset = (req, res) => {
     leds.reset()
     res.send(204)
