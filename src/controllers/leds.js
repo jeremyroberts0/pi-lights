@@ -20,7 +20,12 @@ module.exports.setPattern = (req, res) => {
 }
 
 module.exports.fade = (req, res) => {
-    leds.fadeSolid(req.body.first, req.body.second, req.body.duration)
+    const { first, second, duration } = req.body
+    if (!first || first.length !== 3 || !second || second.length !== 3 || !duration) {
+        res.send(400)
+        return
+    }
+    leds.fadeSolid(first, second, duration)
     res.send(204)
 }
 
