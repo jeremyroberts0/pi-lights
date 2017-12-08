@@ -47,14 +47,14 @@ module.exports.fadeSolid = (firstColor, secondColor, duration) => {
     // -0.051
 
     clearInterval(animationInterval)
-    let ticks = 0
+    let tick = 0
     let previousColor = firstColor
     animationInterval = setInterval(() => {
         const nextColor = previousColor.map((c, i) => c - deltasPerTick[i])
         setSolidColor(nextColor)
         previousColor = nextColor
-        ticks += 1
-        if (ticks >= duration) {
+        tick += 1
+        if (tick >= duration) {
             // All Done
             clearInterval(animationInterval)
             setSolidColor(secondColor)

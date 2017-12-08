@@ -41,5 +41,5 @@ server.listen(port, () => {
     log.info(`Server listening on port ${port}`)
 
     // Fade green to white once started
-    leds.setSolidColor([0, 255, 0], [255, 255, 255], 5000)
+    leds.setSolidColor([255, 255, 255])
 })
