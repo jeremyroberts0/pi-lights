@@ -6,20 +6,49 @@
 
 Pi Lights is a REST API for controller a strip of individually addressable LEDs.  Currently built for ws2801 LEDs but this could easily be made configurable.
 
+
+## API
+
+Info
+
+```sh
+curl http://localhost:8080/info
+```
+
+Set Pattern
+
+```sh
+curl -X POST http://localhost:8080/pattern/off
+curl -X POST http://localhost:8080/pattern/rainbow
+curl -X POST http://localhost:8080/pattern/white
+curl -X POST http://localhost:8080/pattern/xmas
+curl -X POST http://localhost:8080/pattern/ready
+curl -X POST http://localhost:8080/pattern/loading
+```
+
+Set Brightness (0-100)
+
+```sh
+curl -X POST http://localhost:8080/brightness/0
+curl -X POST http://localhost:8080/brightness/25
+curl -X POST http://localhost:8080/brightness/50
+curl -X POST http://localhost:8080/brightness/75
+curl -X POST http://localhost:8080/brightness/100
+```
+
+
+
 ## Usage
 
 ### Preqrequisites
 - NodeJS
-- Yarn
 
 ### Development
-- Install dependencies: `yarn --pure-lockfile`
-- Start: `npm run start:dev`
-
-Be sure to use `start:dev` and not `start` for development.  The `start` command will throw an exception at boot up if it doesn't have access to SPIO pins.
+- Install dependencies: `npm i`
+- Start: `npm run start`
 
 ### Production (Raspberry Pi)
-- Install dependencies `yarn --pure-lockfile --production`
+- Install dependencies `npm i `
 - Start: `sudo npm start` (currently requires root permissions to access SPIO)
 
 ### Additional pi config

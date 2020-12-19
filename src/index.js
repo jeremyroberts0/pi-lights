@@ -1,45 +1,93 @@
+
+
 const restify = require('restify')
-const log = require('./log')
-const config = require('./config')
 
-const infoController = require('./controllers/info')
-const ledController = require('./controllers/leds')
-
+const patterns = require('./patterns');
 const leds = require('./leds')
 
-// Set to yellow while starting up
-leds.setSolidColor([255, 255, 0])
+const PORT = 8080;
+const LED_MAX_COUNT = 1800;
+leds.init(LED_MAX_COUNT);
 
 const server = restify.createServer()
-const logLevel = (process.env.LOG_LEVEL || 'info').toLowerCase()
 
-log.setLevel(logLevel)
+// App State
+let lastPattern;
+let lastBrightness;
+let currentSize = LED_MAX_COUNT
 
-const port = config.PORT
-const basePath = config.BASE_PATH
-const ledBasePath = config.LED_BASE_PATH
+// Brightness Control
+function setBrightness(level) {
+    lastBrightness = level;
+    leds.setBrightness(level);
+}
 
-// Middleware
-server.use(restify.plugins.jsonBodyParser())
+// Pattern Control
+function setPattern(pattern) {
+    lastPattern = pattern;
+    if (!patterns[pattern]) console.error(`missing pattern func for ${pattern}`);
+    if (pattern !== patterns[pattern].name) {
+        console.error(`pattern key ${pattern} and pattern func name ${patterns[pattern].name} don't match`)
+    }
+    leds.setPattern(currentSize, patterns[pattern]);
+}
+setBrightness(25);
+setPattern('loading')
+
 server.pre((req, res, next) => {
-    log.info(`Incoming Request: ${req.method} - ${req.url}`)
+    console.info(`Incoming Request: ${req.method} - ${req.url}`)
     next()
 })
 
-// Info Route
-server.get(`${basePath}/info`, infoController)
+server.get('/info', (req, res) => {
+    res.send({
+        status: 'healthy',
+        available_patterns: Object.keys(patterns),
+        pattern: lastPattern,
+        brightness: lastBrightness,
+    })
+})
 
-// LED Strip Manipulation Routes
-server.post(`${ledBasePath}/solid`, ledController.setSolidColor)
-server.post(`${ledBasePath}/pattern`, ledController.setPattern)
-server.post(`${ledBasePath}/reset`, ledController.reset)
-server.post(`${ledBasePath}/rainbow`, ledController.rainbow)
-server.post(`${ledBasePath}/xmas`, ledController.xmas)
-server.post(`${ledBasePath}/fade`, ledController.fade)
+server.post('/leds/size/:size', (req, res) => {
+    const newSize = parseInt(req.params.size, 10);
+    if (isNaN(newSize) || Math.floor(newSize) !== newSize) {
+        return res.send(400, {
+            error: 'size param should be an integer',
+        })
+    }
+    currentSize = newSize
+    return res.send(204)
+})
 
-server.listen(port, () => {
-    log.info(`Server listening on port ${port}`)
+server.post('/pattern/:pattern', (req, res) => {
+    const newPattern = req.params.pattern;
+    if (!patterns[newPattern]) {
+        return res.send(400, {
+            error: `unknown pattern ${newPattern}`,
+        })
+    }
+    if (lastBrightness === 0) setBrightness(100);
+    setPattern(newPattern);
+    return res.send(204);
+});
 
-    // Fade green to white once started
-    leds.setSolidColor([255, 255, 255])
+server.post('/brightness/:level', (req, res) => {
+    const newBrightness = parseInt(req.params.level, 10);
+    if (
+        isNaN(newBrightness)
+      || newBrightness < 0
+      || newBrightness > 100
+      || Math.floor(newBrightness) !== newBrightness
+    ) {
+        return res.send(400, {
+            error: 'brightness level should be int between 0 and 100',
+        })
+    }
+    setBrightness(newBrightness);
+    return res.send(204);
+})
+
+server.listen(PORT, () => {
+    setPattern('ready')
+    console.info(`Server listening on port ${PORT}`)
 })

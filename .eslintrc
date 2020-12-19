@@ -2,7 +2,10 @@
     "extends": "airbnb-base",
     "rules": {
         "semi": "off",
-        "indent": ["error", 4]
+        "indent": ["error", 4],
+        "no-console": "off",
+        "no-restricted-globals": "off",
+        "global-require": "off"
     },
     "env": {
         "node": true,

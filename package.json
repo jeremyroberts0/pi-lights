@@ -1,13 +1,12 @@
 {
   "name": "pi-lights",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Control individually addressable LED strips with a raspberry pi",
   "main": "src/index.js",
   "scripts": {
-    "start:dev": "NODE_ENV=development LOG_LEVEL=debug node src/index.js",
-    "start": "NODE_ENV=production LOG_LEVEL=info node src/index.js",
+    "start": "node src/index.js",
     "test": "npm run test:lint",
-    "test:lint": "eslint src/*.js",
+    "test:lint": "eslint --fix **/*.js",
     "build:prod": "NODE_ENV=production npm install --only=production"
   },
   "repository": {
@@ -22,8 +21,7 @@
   "homepage": "https://github.com/jeremyroberts0/pi-lights",
   "dependencies": {
     "restify": "^6.3.4",
-    "rpi-ws2801": "^0.0.4",
-    "simple-node-logger": "^0.93.33"
+    "rpi-ws281x-native": "^0.10.1"
   },
   "devDependencies": {
     "eslint": "^4.12.0",
