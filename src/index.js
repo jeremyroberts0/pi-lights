@@ -5,8 +5,11 @@ const restify = require('restify')
 const patterns = require('./patterns');
 const leds = require('./leds')
 
+require('./mdns')();
+
 const PORT = 8080;
 const LED_MAX_COUNT = 1800;
+
 leds.init(LED_MAX_COUNT);
 
 const server = restify.createServer()
@@ -90,4 +93,4 @@ server.post('/brightness/:level', (req, res) => {
 server.listen(PORT, () => {
     setPattern('ready')
     console.info(`Server listening on port ${PORT}`)
-})
+});
