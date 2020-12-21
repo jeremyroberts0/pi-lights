@@ -1,0 +1,10 @@
+ [Unit]
+ Description=Pi Lights
+ After=multi-user.target
+
+ [Service]
+ Type=idle
+ ExecStart=/usr/bin/nodejs /home/pi/pi-lights/src/index.js
+
+ [Install]
+ WantedBy=multi-user.target
