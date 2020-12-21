@@ -13,6 +13,7 @@ module.exports = function xmas(size) {
             let curr;
             const newState = [];
             forAllLeds(size, (led) => {
+                curr += 1;
                 if (!this.assignments[curr]) curr = 0;
                 newState[led] = this.assignments[curr];
             })
