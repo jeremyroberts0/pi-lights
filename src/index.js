@@ -9,6 +9,7 @@ require('./mdns')();
 
 const PORT = 8080;
 const LED_MAX_COUNT = 300;
+const startTime = new Date().toLocaleString();
 
 leds.init(LED_MAX_COUNT);
 
@@ -48,6 +49,7 @@ server.get('/info', (req, res) => {
         available_patterns: Object.keys(patterns),
         pattern: lastPattern,
         brightness: lastBrightness,
+        started_at: startTime,
     })
 })
 
@@ -103,7 +105,9 @@ server.post('/color/:r/:g/:b', (req, res) => {
     if (!isColorValid(g)) return res.send(400, { error: 'invalid g value' });
     if (!isColorValid(b)) return res.send(400, { error: 'invalid b value' });
 
-    setPattern(patterns.solid(r, g, b));
+    lastPattern = `solid(${r}, ${g}, ${b})`;
+
+    leds.setPattern(currentSize, patterns.solid(r, g, b));
     return res.send(204);
 })
 

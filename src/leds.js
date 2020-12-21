@@ -19,7 +19,7 @@ function render(colors) {
 let currentInterval
 // Takes current led strip length and pattern from patterns dir
 function setPattern(size, pattern) {
-    if (!size) {
+    if (!size || typeof size !== 'number') {
         console.error('missing size in set pattern');
         return
     }
