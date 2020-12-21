@@ -8,7 +8,7 @@ const leds = require('./leds')
 require('./mdns')();
 
 const PORT = 8080;
-const LED_MAX_COUNT = 1800;
+const LED_MAX_COUNT = 300;
 
 leds.init(LED_MAX_COUNT);
 
@@ -51,7 +51,7 @@ server.get('/info', (req, res) => {
     })
 })
 
-server.post('/leds/size/:size', (req, res) => {
+server.post('/size/:size', (req, res) => {
     const newSize = parseInt(req.params.size, 10);
     if (isNaN(newSize) || Math.floor(newSize) !== newSize) {
         return res.send(400, {
@@ -88,6 +88,23 @@ server.post('/brightness/:level', (req, res) => {
     }
     setBrightness(newBrightness);
     return res.send(204);
+})
+
+function isColorValid (val) {
+  if (isNaN(val) || val < 0 || val > 255) return false;
+  return true;
+}
+server.post('/color/:r/:g/:b', (res, res) => {
+  const r = parseInt(req.params.r, 10);
+  const g = parseInt(req.params.g, 10);
+  const b = parseInt(req.params.b, 10);
+
+  if (isColorValid(r)) return res.send(400, {error: 'invalid r value'});
+  if (isColorValid(g)) return res.send(400, {error: 'invalid g value'});
+  if (isColorValid(b)) return res.send(400, {error: 'invalid b value'});
+
+  setPattern(patterns.solid(r, g, b));
+  res.send(204);
 })
 
 server.listen(PORT, () => {
