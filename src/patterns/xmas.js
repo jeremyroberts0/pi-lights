@@ -2,6 +2,7 @@ const { forAllLeds } = require('./utils');
 
 module.exports = function xmas(size) {
     return {
+        interval: 750,
         assignments: [
             [255, 0, 0],
             [0, 255, 0],
