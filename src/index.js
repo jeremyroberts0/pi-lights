@@ -99,9 +99,9 @@ server.post('/color/:r/:g/:b', (req, res) => {
     const g = parseInt(req.params.g, 10);
     const b = parseInt(req.params.b, 10);
 
-    if (isColorValid(r)) return res.send(400, { error: 'invalid r value' });
-    if (isColorValid(g)) return res.send(400, { error: 'invalid g value' });
-    if (isColorValid(b)) return res.send(400, { error: 'invalid b value' });
+    if (!isColorValid(r)) return res.send(400, { error: 'invalid r value' });
+    if (!isColorValid(g)) return res.send(400, { error: 'invalid g value' });
+    if (!isColorValid(b)) return res.send(400, { error: 'invalid b value' });
 
     setPattern(patterns.solid(r, g, b));
     return res.send(204);
