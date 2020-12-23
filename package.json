@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "start:dev": "NO_UPDATE=true node src/index.js",
     "test": "npm run test:lint",
     "test:lint": "eslint --fix **/*.js",
     "build:prod": "NODE_ENV=production npm install --only=production"

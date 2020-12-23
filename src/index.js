@@ -4,6 +4,8 @@ const restify = require('restify')
 
 const patterns = require('./patterns');
 const leds = require('./leds');
+const fs = require('fs');
+const path = require('path');
 
 // Start MDNS listener for convenient contact over local network
 require('./mdns')();
@@ -23,10 +25,46 @@ const server = restify.createServer()
 // App State
 let lastPattern;
 let lastBrightness;
-let currentSize = LED_MAX_COUNT
+let currentSize;
+
+const persistenceDir = path.resolve(__dirname, 'persistence');
+const lastPatternDir = path.resolve(persistenceDir, 'lastPattern');
+const lastBrightnessDir = path.resolve(persistenceDir, 'lastBrightness');
+const lastSizeDir = path.resolve(persistenceDir, 'lastSize');
+
+function saveState() {
+    try {
+        if (!fs.existsSync(persistenceDir)) {
+            console.log('creating persistence dir');
+            fs.mkdirSync(persistenceDir);
+        }
+        fs.writeFileSync(lastPatternDir, lastPattern)
+        console.log('wrote last pattern to persistence', lastPattern, lastPatternDir);
+        fs.writeFileSync(lastBrightnessDir, lastBrightness)
+        console.log('wrote last brightness to persistence', lastBrightness, lastBrightnessDir);
+        fs.writeFileSync(lastSizeDir, currentSize)
+        console.log('wrote last size to persistence', currentSize, lastSizeDir);
+    } catch (err) {
+        console.error('error saving state');
+    }
+}
+
+process.on('exit', saveState);
+process.on('SIGINT', (signal) => {
+    saveState()
+    process.exit(signal)
+});
+process.on('SIGTERM', (signal) => {
+    saveState()
+    process.exit(signal)
+});
 
 // Brightness Control
 function setBrightness(level) {
+    if (isNaN(level) || level < 0 || level > 100) {
+        console.error('invalid brightness', level)
+        return
+    }
     lastBrightness = level;
     leds.setBrightness(level);
 }
@@ -34,14 +72,49 @@ function setBrightness(level) {
 // Pattern Control
 function setPattern(pattern) {
     lastPattern = pattern;
-    if (!patterns[pattern]) console.error(`missing pattern func for ${pattern}`);
+    if (!patterns[pattern]) {
+        console.error(`missing pattern func for ${pattern}`);
+        return
+    }
     if (pattern !== patterns[pattern].name) {
         console.error(`pattern key ${pattern} and pattern func name ${patterns[pattern].name} don't match`)
+        return
     }
     leds.setPattern(currentSize, patterns[pattern]);
 }
-setBrightness(25);
-setPattern('loading')
+
+// Restore prior state
+try {
+    let priorSize = fs.readFileSync(lastSizeDir, 'utf8');
+    priorSize = parseInt(priorSize, 10);
+    if (isNaN(priorSize) || priorSize < 0) throw new Error('invalid size in persistent state');
+    console.log('restoring prior size', priorSize);
+    currentSize = priorSize;
+} catch (err) {
+    console.error('error restoring size', err);
+    currentSize = LED_MAX_COUNT;
+}
+
+try {
+    let priorBrightness = fs.readFileSync(lastBrightnessDir, 'utf8');
+    priorBrightness = parseInt(priorBrightness, 10);
+    if (isNaN(priorBrightness) || priorBrightness < 0 || priorBrightness > 255) throw new Error('invalid brightness persistent state');
+    console.log('restoring prior brightness', priorBrightness);
+    setBrightness(priorBrightness);
+} catch (err) {
+    console.error('error restoring brightness', err);
+    setBrightness(25);
+}
+
+try {
+    const priorPattern = fs.readFileSync(lastPatternDir, 'utf8');
+    if (!priorPattern || !patterns[priorPattern] || !patterns[priorPattern].name) throw new Error('invalid prior pattern');
+    console.log('restoring prior pattern', priorPattern);
+    setPattern(priorPattern)
+} catch (err) {
+    console.error('error restoring pattern', err);
+    setPattern('ready')
+}
 
 server.pre((req, res, next) => {
     console.info(`Incoming Request: ${req.method} - ${req.url}`)

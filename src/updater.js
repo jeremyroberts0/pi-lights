@@ -13,6 +13,10 @@ const MIN_INTERVAL = 1 * 60 * 1000; // 1 minute
 let updateRunning = false;
 
 function startUpdater(interval) {
+    if (process.env['NO_UPDATE'] === 'true') {
+      console.error('auto update disabled via env var')
+      return
+    }
     if (interval < MIN_INTERVAL) {
         console.error('update interval less than 1 minute: ', interval);
         console.error('updater not running');
