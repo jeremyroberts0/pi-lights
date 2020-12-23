@@ -36,7 +36,12 @@ curl -X POST http://localhost:8080/brightness/75
 curl -X POST http://localhost:8080/brightness/100
 ```
 
+## Running as a systemd service
 
+1. Place `pilights.service` in /lib/systemd/system
+2. `sudo systemctl enable myscript.service`
+
+View logs with: `journalctl -u pilights.service`
 
 ## Usage
 
