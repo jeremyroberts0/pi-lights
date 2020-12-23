@@ -9,7 +9,7 @@ const leds = require('./leds');
 require('./mdns')();
 
 // Start updater for auto updating of app
-const UPDATE_INTERVAL = 1 * 60 * 3000; // 3 minute
+const UPDATE_INTERVAL = 3 * 60 * 1000; // 3 minutes
 require('./updater')(UPDATE_INTERVAL)
 
 const PORT = 8080;

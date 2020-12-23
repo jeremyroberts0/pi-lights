@@ -56,6 +56,8 @@ function startUpdater(interval) {
         }
         updateRunning = false;
     }, interval)
+
+    console.log('updater interval started with', interval);
 }
 
 module.exports = startUpdater;
