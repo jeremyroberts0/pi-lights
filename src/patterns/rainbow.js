@@ -62,7 +62,7 @@ module.exports = function rainbow(size) {
         rgbState[led] = nextColor
     })
     return {
-        interval: 2,
+        interval: 3000 / size, // 3 seconds to transition the whole string
         state: rgbState,
         get() {
             this.state.push(this.state.shift())
