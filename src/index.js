@@ -3,9 +3,13 @@
 const restify = require('restify')
 
 const patterns = require('./patterns');
-const leds = require('./leds')
+const leds = require('./leds');
 
+// Start MDNS listener for convenient contact over local network
 require('./mdns')();
+
+// Start updater for auto updating of app
+require('./updater')(3000)
 
 const PORT = 8080;
 const LED_MAX_COUNT = 300;
