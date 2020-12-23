@@ -9,7 +9,8 @@ const leds = require('./leds');
 require('./mdns')();
 
 // Start updater for auto updating of app
-require('./updater')(3000)
+const UPDATE_INTERVAL = 1 * 60 * 3000; // 3 minute
+require('./updater')(UPDATE_INTERVAL)
 
 const PORT = 8080;
 const LED_MAX_COUNT = 300;

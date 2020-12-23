@@ -16,6 +16,7 @@ function startUpdater(interval) {
     if (interval < MIN_INTERVAL) {
         console.error('update interval less than 1 minute: ', interval);
         console.error('updater not running');
+        return;
     }
     setInterval(async () => {
         if (updateRunning) {
