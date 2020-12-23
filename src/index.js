@@ -118,5 +118,5 @@ server.post('/color/:r/:g/:b', (req, res) => {
 
 server.listen(PORT, () => {
     setPattern('ready')
-    console.info(`Server listening on port ${PORT}`)
+    console.info(`Server started and listening on port ${PORT}`)
 });
