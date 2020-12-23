@@ -4,6 +4,7 @@ const sg = require('simple-git');
 const git = sg({
     baseDir: __dirname,
 })
+    .env('GIT_SSH_COMMAND', 'ssh -i /home/pi/.ssh/id_rsa')
 
 const MIN_INTERVAL = 1 * 60 * 1000; // 1 minute
 
@@ -47,7 +48,6 @@ function startUpdater(interval) {
             console.log('app updated, exiting process')
             process.exit(0);
             // Expect app to be restarted by systemd (see pilights.service)
-
         } catch (err) {
             console.error('updater error', err);
         }
