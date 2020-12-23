@@ -1,6 +1,8 @@
 const cp = require('child_process')
 const sg = require('simple-git');
 
+const expectedError = new Error('expected error');
+
 const git = sg({
     baseDir: __dirname,
 })
@@ -18,14 +20,14 @@ function startUpdater(interval) {
     setInterval(async () => {
         if (updateRunning) {
             console.log('update already running, skipping');
-            return;
+            throw expectedError;
         }
         updateRunning = true;
         try {
             const diff = await git.diff();
             if (diff !== '') {
                 console.error('local repo contains changes, not updating');
-                return;
+                throw expectedError;
             }
 
             await git.fetch('origin', 'master');
@@ -34,7 +36,7 @@ function startUpdater(interval) {
 
             if (localMasterSha === remoteMasterSha) {
                 console.log('nothing to update, master and origin/master match', localMasterSha);
-                return;
+                throw expectedError;
             }
 
             await git.checkout('master')
@@ -49,7 +51,7 @@ function startUpdater(interval) {
             process.exit(0);
             // Expect app to be restarted by systemd (see pilights.service)
         } catch (err) {
-            console.error('updater error', err);
+            if (err !== expectedError) console.error('updater error', err);
         }
         updateRunning = false;
     }, interval)
