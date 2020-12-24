@@ -14,7 +14,9 @@ require('./mdns')();
 const UPDATE_INTERVAL = 3 * 60 * 1000; // 3 minutes
 require('./updater')(UPDATE_INTERVAL)
 
-const PORT = 8080;
+const html = fs.readFileSync(path.resolve(__dirname, 'www', 'index.html'), { encoding: 'utf8' });
+
+const PORT = process.env.PORT || 80;
 const LED_MAX_COUNT = 300;
 const startTime = new Date().toLocaleString();
 
@@ -187,6 +189,15 @@ server.post('/color/:r/:g/:b', (req, res) => {
 
     leds.setPattern(currentSize, patterns.solid(r, g, b));
     return res.send(204);
+})
+
+server.get('/index.html', (req, res) => {
+    res.writeHead(200, {
+        'Content-Length': Buffer.byteLength(html),
+        'Content-Type': 'text/html',
+    });
+    res.write(html)
+    res.end()
 })
 
 server.listen(PORT, () => {

@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/css/foundation.min.css" integrity="sha256-ogmFxjqiTMnZhxCqVmcqTvjfe1Y/ec4WaRj/aQPvn+I=" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/js/foundation.min.js" integrity="sha256-pRF3zifJRA9jXGv++b06qwtSqX1byFQOLjqa2PTEb2o=" crossorigin="anonymous"></script>
+    <script>
+      function getPatternClickListener (pattern) {
+        return function () {
+          fetch('/pattern/' + pattern, {
+            method: 'POST'
+          })
+            .then(refresh)
+            .catch(function (err) {
+              alert('error updating pattern: ' + err.message);
+            })
+        }
+      }
+
+      function onBrightnessChange (newBrightness) {
+        fetch('/brightness/' + newBrightness, {
+          method: 'POST'
+        })
+          .then(refresh)
+          .catch(function (err) {
+            alert('error updating brightness: ' + err.message);
+          })
+      }
+
+      function refresh() {
+        fetch('/info')
+          .then(res => res.json())
+          .then(data => {
+            document.getElementById('brightness-control')
+              .setAttribute('value', data.brightness);
+
+            const buttons = [ ];
+            for (const pattern of data.available_patterns) {
+              const b = document.createElement('button');
+              b.setAttribute('id', 'pattern-' + pattern);
+              b.innerText = pattern;
+              if (pattern === data.pattern) {
+                b.setAttribute('class', 'button full primary')
+              } else {
+                b.setAttribute('class', 'button full secondary')
+              }
+              b.onclick = getPatternClickListener(pattern);
+              buttons.push(b)
+            }
+            buttons.sort((a, b) => a.getAttribute('id') - b.getAttribute('id'));
+
+            const buttonWrapper = document.getElementById('pattern-buttons')
+            buttonWrapper.innerHTML = ''
+            for (const button of buttons) {
+              buttonWrapper.appendChild(button);
+            }
+          })
+      }
+      refresh();
+    </script>
+    <style>
+      .main {
+        margin: 20px;
+      }
+      .full {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <h1>Pi Lights Control</h1>
+      <div class="callout">
+        <h5>Brightness</h5>
+        <input class="full" id="brightness-control" type="range" min="0" max="100" onchange="onBrightnessChange(this.value)">
+      </div>
+      <div class="callout">
+        <h5>Patterns</h5>
+        <div id="pattern-buttons">
+
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

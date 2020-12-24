@@ -7,6 +7,7 @@ module.exports = function white(size) {
             forAllLeds(size, (led) => {
                 state[led] = [255, 255, 255];
             })
+            return state;
         },
     }
 }

@@ -16,6 +16,10 @@ function rgb2Int(r, g, b) {
 }
 
 function render(colors) {
+    if (!colors || !(colors instanceof Array)) {
+        console.error('tried to render `colors` that is not an array')
+        return;
+    }
     ws281x.render(colors.map(([r, g, b]) => rgb2Int(r, g, b)));
 }
 

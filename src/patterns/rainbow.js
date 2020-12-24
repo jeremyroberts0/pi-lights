@@ -63,6 +63,7 @@ module.exports = function rainbow(size) {
     })
     return {
         interval: 5000 / size, // 3 seconds to transition the whole string
+        state: rgbState,
         get() {
             this.state.push(this.state.shift())
             return this.state;
