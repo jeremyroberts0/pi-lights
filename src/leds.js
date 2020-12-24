@@ -1,5 +1,7 @@
 const ws281x = require('rpi-ws281x-native');
 
+const MIN_INTERVAL = 20
+
 let didInit = false;
 function init(size) {
     if (didInit) return;
@@ -32,6 +34,12 @@ function setPattern(size, pattern) {
     const p = pattern(size)
     render(p.get())
     console.log(`rendered pattern ${pattern.name}`);
+
+    let { interval } = p;
+    if (interval < MIN_INTERVAL) {
+        console.error(`interval for pattern ${interval} less than minimum ${MIN_INTERVAL}, correcting`);
+        interval = MIN_INTERVAL
+    }
 
     if (p.interval) {
         console.log(`updating with ${pattern.name} every ${p.interval}ms`)
