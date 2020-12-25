@@ -1,5 +1,6 @@
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/css/foundation.min.css" integrity="sha256-ogmFxjqiTMnZhxCqVmcqTvjfe1Y/ec4WaRj/aQPvn+I=" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/js/foundation.min.js" integrity="sha256-pRF3zifJRA9jXGv++b06qwtSqX1byFQOLjqa2PTEb2o=" crossorigin="anonymous"></script>
@@ -26,6 +27,10 @@
           })
       }
 
+      function onBrightnessInput (brightness) {
+        $('.brightness-value').html(brightness);
+      }
+
       function refresh() {
         fetch('/info')
           .then(res => res.json())
@@ -33,15 +38,17 @@
             document.getElementById('brightness-control')
               .setAttribute('value', data.brightness);
 
+            $('.brightness-value').html(data.brightness);
+
             const buttons = [ ];
             for (const pattern of data.available_patterns) {
               const b = document.createElement('button');
               b.setAttribute('id', 'pattern-' + pattern);
               b.innerText = pattern;
               if (pattern === data.pattern) {
-                b.setAttribute('class', 'button full primary')
+                b.setAttribute('class', 'button large full primary')
               } else {
-                b.setAttribute('class', 'button full secondary')
+                b.setAttribute('class', 'button large full secondary')
               }
               b.onclick = getPatternClickListener(pattern);
               buttons.push(b)
@@ -64,14 +71,23 @@
       .full {
         width: 100%;
       }
+      .brightness-box {
+        position: relative;
+      }
+      .brightness-value {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+      }
     </style>
   </head>
   <body>
     <div class="main">
       <h1>Pi Lights Control</h1>
-      <div class="callout">
+      <div class="callout brightness-box">
         <h5>Brightness</h5>
-        <input class="full" id="brightness-control" type="range" min="0" max="100" onchange="onBrightnessChange(this.value)">
+        <span class="brightness-value"></span>
+        <input class="full" id="brightness-control" type="range" min="0" max="100" onchange="onBrightnessChange(this.value)" oninput="onBrightnessInput(this.value)">
       </div>
       <div class="callout">
         <h5>Patterns</h5>
