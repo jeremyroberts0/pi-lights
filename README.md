@@ -70,27 +70,3 @@ curl -X POST http://localhost/brightness/50
 curl -X POST http://localhost/brightness/75
 curl -X POST http://localhost/brightness/100
 ```
-
-## Usage
-
-### Preqrequisites
-- NodeJS
-
-### Development
-- Install dependencies: `npm i`
-- Start: `npm run start`
-
-### Production (Raspberry Pi)
-- Install dependencies `npm i `
-- Start: `sudo npm start` (currently requires root permissions to access SPIO)
-
-### Additional pi config
-- The default raspbian installation has SPIO disabled.  You'll need to enable it via `raspi-config`
-- The app does not start automatically when the pi boots, you'll need to start it manually
-
-## Native App
-Native app for controlling this server can be found here:
-https://github.com/jeremyroberts0/pi-lights-app
-
-## Roadmap
-- Encapsulate / document pi pre-requisites as much as possible.
