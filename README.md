@@ -11,7 +11,7 @@ Features include:
 - Self-updating by watching the master branch at https://github.com/jeremyroberts0/pi-lights
 - Web interface wrapping the REST API for easy control on local network (note Chrome on Android does not support MDNS, so you have to navigiate via IP Address of the pi)
 
-## WishLight
+## Wishlist
 
 - Homeassistant integration
 
