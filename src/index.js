@@ -51,16 +51,6 @@ function saveState() {
     }
 }
 
-process.on('exit', saveState);
-process.on('SIGINT', (signal) => {
-    saveState()
-    process.exit(signal)
-});
-process.on('SIGTERM', (signal) => {
-    saveState()
-    process.exit(signal)
-});
-
 // Brightness Control
 function setBrightness(level) {
     if (isNaN(level) || level < 0 || level > 100) {
@@ -141,6 +131,7 @@ server.post('/size/:size', (req, res) => {
         })
     }
     currentSize = newSize
+    saveState();
     return res.send(204)
 })
 
@@ -153,6 +144,7 @@ server.post('/pattern/:pattern', (req, res) => {
     }
     if (lastBrightness === 0) setBrightness(100);
     setPattern(newPattern);
+    saveState();
     return res.send(204);
 });
 
@@ -169,6 +161,7 @@ server.post('/brightness/:level', (req, res) => {
         })
     }
     setBrightness(newBrightness);
+    saveState();
     return res.send(204);
 })
 
@@ -188,6 +181,7 @@ server.post('/color/:r/:g/:b', (req, res) => {
     lastPattern = `solid(${r}, ${g}, ${b})`;
 
     leds.setPattern(currentSize, patterns.solid(r, g, b));
+    saveState();
     return res.send(204);
 })
 
