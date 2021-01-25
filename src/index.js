@@ -149,7 +149,7 @@ server.post('/pattern/:pattern', (req, res) => {
 });
 
 server.post('/brightness/:level', (req, res) => {
-    const newBrightness = parseInt(req.params.level, 10);
+    const newBrightness = Math.floor(parseFloat(req.params.level));
     if (
         isNaN(newBrightness)
       || newBrightness < 0
