@@ -5,5 +5,4 @@ module.exports = {
     xmas: require('./xmas'),
     ready: require('./ready'),
     loading: require('./loading'),
-    solid: require('./solid'),
 }

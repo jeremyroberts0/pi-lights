@@ -165,25 +165,26 @@ server.post('/brightness/:level', (req, res) => {
     return res.send(204);
 })
 
-function isColorValid(val) {
-    if (isNaN(val) || val < 0 || val > 255) return false;
-    return true;
-}
-server.post('/color/:r/:g/:b', (req, res) => {
-    const r = parseInt(req.params.r, 10);
-    const g = parseInt(req.params.g, 10);
-    const b = parseInt(req.params.b, 10);
+// TODO: Make work without being a pattern
+// function isColorValid(val) {
+//     if (isNaN(val) || val < 0 || val > 255) return false;
+//     return true;
+// }
+// server.post('/color/:r/:g/:b', (req, res) => {
+//     const r = parseInt(req.params.r, 10);
+//     const g = parseInt(req.params.g, 10);
+//     const b = parseInt(req.params.b, 10);
 
-    if (!isColorValid(r)) return res.send(400, { error: 'invalid r value' });
-    if (!isColorValid(g)) return res.send(400, { error: 'invalid g value' });
-    if (!isColorValid(b)) return res.send(400, { error: 'invalid b value' });
+//     if (!isColorValid(r)) return res.send(400, { error: 'invalid r value' });
+//     if (!isColorValid(g)) return res.send(400, { error: 'invalid g value' });
+//     if (!isColorValid(b)) return res.send(400, { error: 'invalid b value' });
 
-    lastPattern = `solid(${r}, ${g}, ${b})`;
+//     lastPattern = `solid(${r}, ${g}, ${b})`;
 
-    leds.setPattern(currentSize, patterns.solid(r, g, b));
-    saveState();
-    return res.send(204);
-})
+//     leds.setPattern(currentSize, patterns.solid(r, g, b));
+//     saveState();
+//     return res.send(204);
+// })
 
 server.get('/index.html', (req, res) => {
     res.writeHead(200, {
