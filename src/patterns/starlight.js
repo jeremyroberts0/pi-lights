@@ -3,7 +3,7 @@ const {
 } = require('./utils');
 
 
-const ratio = 0.25;
+const ratio = 0.35;
 const starColors = [
     colors.green,
     colors.yellow,
@@ -13,6 +13,19 @@ const starColors = [
 const starLifeMin = 5000;
 const starLifeMax = 20000;
 const updateInterval = intervals['48fps']
+
+function newStar() {
+    const color = starColors[randomNumber(0, starColors.length - 1)];
+    const lifetime = randomNumber(starLifeMin, starLifeMax);
+    const totalUpdates = lifetime / updateInterval
+    const rgbIntervals = color.map(c => Math.round(c / totalUpdates));
+    return {
+        color: colors.off,
+        rgbIntervals,
+        updates: 0,
+        totalUpdates,
+    }
+}
 
 module.exports = function starlight(size) {
     /*
@@ -30,16 +43,7 @@ module.exports = function starlight(size) {
         if (!shouldLight) {
             state[led] = { color: colors.off, inactive: true }
         } else {
-            const color = starColors[randomNumber(0, starColors.length - 1)];
-            const lifetime = randomNumber(starLifeMin, starLifeMax);
-            const totalUpdates = lifetime / updateInterval
-            const rgbIntervals = color.map(c => Math.round(c / totalUpdates));
-            state[led] = {
-                color: colors.off,
-                rgbIntervals,
-                updates: 0,
-                totalUpdates,
-            }
+            state[led] = newStar()
         }
     });
 
@@ -48,16 +52,33 @@ module.exports = function starlight(size) {
         state,
         get() {
             const rawColors = [];
-            for (const led of state) {
+            let toAdd = 0;
+            for (const led of this.state) {
                 if (!led.inactive) {
                     let colorFactor = led.rgbIntervals;
                     led.updates += 1;
                     if (led.updates * 2 > led.totalUpdates) {
                         colorFactor = led.rgbIntervals.map(i => i * -1);
                     }
-                    led.color = led.color.map((v, i) => Math.max(Math.round(v + colorFactor[i]), 0));
+                    let allOff = true;
+                    led.color = led.color.map((v, i) => {
+                        const next = Math.max(Math.round(v + colorFactor[i]), 0);
+                        if (next > 0) allOff = false;
+                        return next;
+                    });
+                    if (allOff) {
+                        toAdd += 1;
+                        led.inactive = true;
+                    }
                 }
                 rawColors.push(led.color);
+            }
+            while (toAdd > 0) {
+                toAdd -= 1;
+                const nextStar = randomNumber(0, this.state.length);
+                if (this.state[nextStar].inactive) {
+                    this.state[nextStar] = newStar()
+                }
             }
             return rawColors;
         },
