@@ -1,4 +1,6 @@
 const ws281x = require('rpi-ws281x-native');
+const log = require('./logger');
+const consoleVisualizer = require('./console_visualizer');
 
 const MIN_INTERVAL = 20
 
@@ -17,36 +19,37 @@ function rgb2Int(r, g, b) {
 
 function render(colors) {
     if (!colors || !(colors instanceof Array)) {
-        console.error('tried to render `colors` that is not an array')
+        log('tried to render `colors` that is not an array')
         return;
     }
-    ws281x.render(colors.map(([r, g, b]) => rgb2Int(r, g, b)));
+    if (process.env.CONSOLE_VISUALIZER) consoleVisualizer(colors)
+    else ws281x.render(colors.map(([r, g, b]) => rgb2Int(r, g, b)));
 }
 
 let currentInterval
 // Takes current led strip length and pattern from patterns dir
 function setPattern(size, pattern) {
     if (!size || typeof size !== 'number') {
-        console.error('missing size in set pattern');
+        log('missing size in set pattern');
         return
     }
     if (typeof pattern !== 'function') {
-        console.error('pattern should be function')
+        log('pattern should be function')
     }
     clearInterval(currentInterval);
 
     const p = pattern(size)
     render(p.get())
-    console.log(`rendered pattern ${pattern.name}`);
+    log(`rendered pattern ${pattern.name}`);
 
     let { interval } = p;
     if (interval < MIN_INTERVAL) {
-        console.error(`interval for pattern ${interval} less than minimum ${MIN_INTERVAL}, correcting`);
+        log(`interval for pattern ${interval} less than minimum ${MIN_INTERVAL}, correcting`);
         interval = MIN_INTERVAL
     }
 
     if (p.interval) {
-        console.log(`updating with ${pattern.name} every ${p.interval}ms`)
+        log(`updating with ${pattern.name} every ${p.interval}ms`)
         currentInterval = setInterval(() => {
             render(p.get())
         }, p.interval)

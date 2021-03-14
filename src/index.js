@@ -19,6 +19,7 @@ const html = fs.readFileSync(path.resolve(__dirname, 'www', 'index.html'), { enc
 const PORT = process.env.PORT || 80;
 const LED_MAX_COUNT = 300;
 const startTime = new Date().toLocaleString();
+const log = require('./logger');
 
 leds.init(LED_MAX_COUNT);
 
@@ -37,24 +38,24 @@ const lastSizeDir = path.resolve(persistenceDir, 'lastSize');
 function saveState() {
     try {
         if (!fs.existsSync(persistenceDir)) {
-            console.log('creating persistence dir');
+            log('creating persistence dir');
             fs.mkdirSync(persistenceDir);
         }
         fs.writeFileSync(lastPatternDir, lastPattern)
-        console.log('wrote last pattern to persistence', lastPattern, lastPatternDir);
+        log('wrote last pattern to persistence', lastPattern, lastPatternDir);
         fs.writeFileSync(lastBrightnessDir, lastBrightness)
-        console.log('wrote last brightness to persistence', lastBrightness, lastBrightnessDir);
+        log('wrote last brightness to persistence', lastBrightness, lastBrightnessDir);
         fs.writeFileSync(lastSizeDir, currentSize)
-        console.log('wrote last size to persistence', currentSize, lastSizeDir);
+        log('wrote last size to persistence', currentSize, lastSizeDir);
     } catch (err) {
-        console.error('error saving state');
+        log('error saving state');
     }
 }
 
 // Brightness Control
 function setBrightness(level) {
     if (isNaN(level) || level < 0 || level > 100) {
-        console.error('invalid brightness', level)
+        log('invalid brightness', level)
         return
     }
     lastBrightness = level;
@@ -65,11 +66,11 @@ function setBrightness(level) {
 function setPattern(pattern) {
     lastPattern = pattern;
     if (!patterns[pattern]) {
-        console.error(`missing pattern func for ${pattern}`);
+        log(`missing pattern func for ${pattern}`);
         return
     }
     if (pattern !== patterns[pattern].name) {
-        console.error(`pattern key ${pattern} and pattern func name ${patterns[pattern].name} don't match`)
+        log(`pattern key ${pattern} and pattern func name ${patterns[pattern].name} don't match`)
         return
     }
     leds.setPattern(currentSize, patterns[pattern]);
@@ -80,10 +81,10 @@ try {
     let priorSize = fs.readFileSync(lastSizeDir, 'utf8');
     priorSize = parseInt(priorSize, 10);
     if (isNaN(priorSize) || priorSize < 0) throw new Error('invalid size in persistent state');
-    console.log('restoring prior size', priorSize);
+    log('restoring prior size', priorSize);
     currentSize = priorSize;
 } catch (err) {
-    console.error('error restoring size', err);
+    log('error restoring size', err);
     currentSize = LED_MAX_COUNT;
 }
 
@@ -91,25 +92,25 @@ try {
     let priorBrightness = fs.readFileSync(lastBrightnessDir, 'utf8');
     priorBrightness = parseInt(priorBrightness, 10);
     if (isNaN(priorBrightness) || priorBrightness < 0 || priorBrightness > 255) throw new Error('invalid brightness persistent state');
-    console.log('restoring prior brightness', priorBrightness);
+    log('restoring prior brightness', priorBrightness);
     setBrightness(priorBrightness);
 } catch (err) {
-    console.error('error restoring brightness', err);
+    log('error restoring brightness', err);
     setBrightness(25);
 }
 
 try {
     const priorPattern = fs.readFileSync(lastPatternDir, 'utf8');
     if (!priorPattern || !patterns[priorPattern] || !patterns[priorPattern].name) throw new Error('invalid prior pattern');
-    console.log('restoring prior pattern', priorPattern);
+    log('restoring prior pattern', priorPattern);
     setPattern(priorPattern)
 } catch (err) {
-    console.error('error restoring pattern', err);
+    log('error restoring pattern', err);
     setPattern('ready')
 }
 
 server.pre((req, res, next) => {
-    console.info(`Incoming Request: ${req.method} - ${req.url}`)
+    log(`Incoming Request: ${req.method} - ${req.url}`)
     next()
 })
 
@@ -196,6 +197,7 @@ server.get('/index.html', (req, res) => {
 })
 
 server.listen(PORT, () => {
+    if (process.env.CONSOLE_VISUALIZER) currentSize = process.stdout.columns;
     setPattern('ready')
-    console.info(`Server started and listening on port ${PORT}`)
+    log(`Server started and listening on port ${PORT}`)
 });

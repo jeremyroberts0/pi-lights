@@ -1,5 +1,6 @@
 const os = require('os');
 const mdnsBuilder = require('multicast-dns');
+const log = require('./logger');
 
 const ttl = 5 * 60 // 5 minutes
 
@@ -27,7 +28,7 @@ function start() {
     const name = os.hostname();
     const mdns = mdnsBuilder();
     // mdns.on('response', (response) => {
-    //     console.log('[mdns]', 'got a response packet:', response)
+    //     log('[mdns]', 'got a response packet:', response)
     // })
 
     mdns.on('query', (query) => {
@@ -42,17 +43,17 @@ function start() {
                         data: ip,
                     })),
                 }
-                console.log('responding to mdns query with', response);
+                log('responding to mdns query with', response);
                 mdns.respond(response)
             }
         })
     })
 
     mdns.on('error', (err) => {
-        console.log('[mdns]', 'error', err);
+        log('[mdns]', 'error', err);
     });
 
-    console.log('[mdns]', 'started mdns server responding to', name);
+    log('[mdns]', 'started mdns server responding to', name);
 }
 
 module.exports = start;

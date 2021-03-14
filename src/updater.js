@@ -2,6 +2,7 @@ const cp = require('child_process')
 const sg = require('simple-git');
 
 const expectedError = new Error('expected error');
+const log = require('./logger');
 
 const git = sg({
     baseDir: __dirname,
@@ -13,25 +14,25 @@ const MIN_INTERVAL = 1 * 60 * 1000; // 1 minute
 let updateRunning = false;
 
 function startUpdater(interval) {
-    if (process.env['NO_UPDATE'] === 'true') {
-      console.error('auto update disabled via env var')
-      return
+    if (process.env.NO_UPDATE === 'true') {
+        log('auto update disabled via env var')
+        return
     }
     if (interval < MIN_INTERVAL) {
-        console.error('update interval less than 1 minute: ', interval);
-        console.error('updater not running');
+        log('update interval less than 1 minute: ', interval);
+        log('updater not running');
         return;
     }
     setInterval(async () => {
         if (updateRunning) {
-            console.log('update already running, skipping');
+            log('update already running, skipping');
             throw expectedError;
         }
         updateRunning = true;
         try {
             const diff = await git.diff();
             if (diff !== '') {
-                console.error('local repo contains changes, not updating');
+                log('local repo contains changes, not updating');
                 throw expectedError;
             }
 
@@ -40,7 +41,7 @@ function startUpdater(interval) {
             const remoteMasterSha = await git.revparse('origin/master');
 
             if (localMasterSha === remoteMasterSha) {
-                console.log('nothing to update, master and origin/master match', localMasterSha);
+                log('nothing to update, master and origin/master match', localMasterSha);
                 throw expectedError;
             }
 
@@ -52,16 +53,16 @@ function startUpdater(interval) {
                 timeout: 5 * 60 * 1000, // 5 minutes
             })
 
-            console.log('app updated, exiting process')
+            log('app updated, exiting process')
             process.exit(0);
             // Expect app to be restarted by systemd (see pilights.service)
         } catch (err) {
-            if (err !== expectedError) console.error('updater error', err);
+            if (err !== expectedError) log('updater error', err);
         }
         updateRunning = false;
     }, interval)
 
-    console.log('updater interval started with', interval);
+    log('updater interval started with', interval);
 }
 
 module.exports = startUpdater;
