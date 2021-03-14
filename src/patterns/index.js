@@ -5,5 +5,6 @@ module.exports = {
     xmas: require('./xmas'),
     ready: require('./ready'),
     loading: require('./loading'),
-    starlight: require('./starlight')
+    starlight: require('./starlight'),
+    stpatricks: require('./stpatricks'),
 }
