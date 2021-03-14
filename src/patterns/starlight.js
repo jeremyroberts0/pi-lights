@@ -1,21 +1,15 @@
 const {
-    colors, intervals, randomNumber, forAllLeds,
+    colors, intervals, randomNumber, forAllLeds, randomColor
 } = require('./utils');
 
 
 const ratio = 0.35;
-const starColors = [
-    colors.green,
-    colors.yellow,
-    colors.blue,
-    colors.white,
-]
 const starLifeMin = 5000;
 const starLifeMax = 20000;
 const updateInterval = intervals['48fps']
 
 function newStar() {
-    const color = starColors[randomNumber(0, starColors.length - 1)];
+    const color = randomColor();
     const lifetime = randomNumber(starLifeMin, starLifeMax);
     const totalUpdates = lifetime / updateInterval
     const rgbIntervals = color.map(c => Math.round(c / totalUpdates));

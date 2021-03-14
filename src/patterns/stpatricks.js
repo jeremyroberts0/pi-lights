@@ -4,7 +4,7 @@ const irishFlag = [
     colors.emerald,
     colors.white,
     colors.orange,
-];
+].reverse();
 // Must reverse it to render in right order on the house
 
 module.exports = function stpatricks(size) {

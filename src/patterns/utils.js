@@ -22,6 +22,14 @@ const intervals = {
 
 const randomNumber = (lower, upper) => Math.floor(Math.random() * upper) + lower;
 
+function randomColor() {
+    return [
+        randomNumber(0, 255),
+        randomNumber(0, 255),
+        randomNumber(0, 255),
+    ]
+}
+
 module.exports = {
-    forAllLeds, colors, intervals, randomNumber,
+    forAllLeds, colors, intervals, randomNumber, randomColor,
 }
