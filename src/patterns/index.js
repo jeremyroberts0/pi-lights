@@ -7,4 +7,5 @@ module.exports = {
     loading: require('./loading'),
     starlight: require('./starlight'),
     stpatricks: require('./stpatricks'),
+    baby: require('./baby'),
 }
