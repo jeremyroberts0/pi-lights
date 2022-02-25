@@ -8,4 +8,5 @@ module.exports = {
     starlight: require('./starlight'),
     stpatricks: require('./stpatricks'),
     baby: require('./baby'),
+    ukraine: require('./ukraine'),
 }
