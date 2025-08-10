@@ -1,0 +1,3 @@
+
+> pi-lights@0.1.0 simulate
+> CONSOLE_VISUALIZER=true node src/index.js
