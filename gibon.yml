@@ -1,0 +1,3 @@
+dependencies: npm ci
+lint: npm run test:lint
+unit: npm test
