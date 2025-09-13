@@ -7,9 +7,79 @@ Pi Lights is an app for controlling a strip of individually addressable LEDs acc
 Features include:
 
 - REST API for controller patterns and brightness (see API docs below)
+- **Terminal debugger** for testing patterns without hardware (see Terminal Debugger section)
 - MDNS server that enables routing to your pi on your local network via the hostname of the pi itself (the hostname of your pi is configured in the OS level)
 - Self-updating by watching the master branch at https://github.com/jeremyroberts0/pi-lights
 - Web interface wrapping the REST API for easy control on local network (note Chrome on Android does not support MDNS, so you have to navigiate via IP Address of the pi)
+
+## Terminal Debugger
+
+The terminal debugger allows you to test LED patterns in your terminal without needing actual LED hardware. Perfect for development and debugging!
+
+### Quick Start
+
+Run any of these commands to start in terminal debug mode:
+
+```bash
+# Simple debug mode
+npm run debug
+
+# Development mode with debug
+npm run debug:dev
+
+# Using command line flags
+node src/index.js --terminal
+node src/index.js --debug
+node src/index.js -t
+
+# Using environment variable
+CONSOLE_VISUALIZER=true node src/index.js
+```
+
+### Visual Features
+
+The terminal debugger displays:
+- **Colored LED blocks** (█) showing actual RGB colors
+- **Position indicators** every 5th and 10th LED for reference  
+- **LED count** and helpful instructions
+- **Real-time updates** as patterns change
+
+### Configuration Options
+
+**Set LED Strip Size:**
+```bash
+# Via command line argument
+node src/index.js --terminal --leds=50
+
+# Via environment variable  
+TERMINAL_LED_COUNT=100 npm run debug
+
+# Default: Uses terminal width
+```
+
+**Available Environment Variables:**
+- `CONSOLE_VISUALIZER=true` - Enable terminal mode
+- `TERMINAL_LED_COUNT=N` - Set number of LEDs to simulate
+- `NO_UPDATE=true` - Disable auto-updater (recommended for development)
+- `PORT=8080` - Set custom port (default: 80)
+
+### Usage Example
+
+1. Start the debugger:
+   ```bash
+   npm run debug
+   ```
+
+2. In another terminal, test patterns:
+   ```bash
+   curl -X POST http://localhost:8080/pattern/rainbow
+   curl -X POST http://localhost:8080/brightness/75
+   curl -X POST http://localhost:8080/pattern/xmas
+   ```
+
+3. Watch the patterns animate in your terminal!
+
+The web interface is also available at `http://localhost:8080/index.html` for visual control.
 
 ## Wishlist
 

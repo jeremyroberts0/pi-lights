@@ -7,6 +7,16 @@ const leds = require('./leds');
 const fs = require('fs');
 const path = require('path');
 
+// Parse command line arguments
+const args = process.argv.slice(2);
+const isTerminalMode = args.includes('--terminal') || args.includes('--debug') || args.includes('-t');
+
+// Enable console visualizer if terminal mode is requested
+if (isTerminalMode && !process.env.CONSOLE_VISUALIZER) {
+    process.env.CONSOLE_VISUALIZER = 'true';
+    console.log('Terminal debugger mode enabled');
+}
+
 // Start MDNS listener for convenient contact over local network
 require('./mdns')();
 
@@ -196,8 +206,32 @@ server.get('/index.html', (req, res) => {
     res.end()
 })
 
+// Parse LED count from arguments or environment variable
+function getTerminalLedCount() {
+    // Check for --leds=N argument
+    const ledsArg = args.find(arg => arg.startsWith('--leds='));
+    if (ledsArg) {
+        const count = parseInt(ledsArg.split('=')[1], 10);
+        if (!isNaN(count) && count > 0) {
+            return count;
+        }
+    }
+    
+    // Check environment variable
+    const envCount = parseInt(process.env.TERMINAL_LED_COUNT, 10);
+    if (!isNaN(envCount) && envCount > 0) {
+        return envCount;
+    }
+    
+    // Default to terminal width
+    return process.stdout.columns;
+}
+
 server.listen(PORT, () => {
-    if (process.env.CONSOLE_VISUALIZER) currentSize = process.stdout.columns;
+    if (process.env.CONSOLE_VISUALIZER) {
+        currentSize = getTerminalLedCount();
+        console.log(`Terminal mode: Using ${currentSize} LEDs`);
+    }
     setPattern('ready')
     log(`Server started and listening on port ${PORT}`)
 });
