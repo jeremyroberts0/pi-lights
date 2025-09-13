@@ -1,0 +1,5 @@
+# Commands used by the gibon autonomous coding agent to validate work during coding sessions
+dependencies: npm ci # Install exact dependencies from package-lock.json
+lint: npm run test:lint # Run ESLint with auto-fix using Airbnb config
+unit: npm test # Run all tests (currently just linting)
+build: echo "No build step required for Node.js application" # Node.js apps typically don't need building
