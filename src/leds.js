@@ -1,14 +1,23 @@
-const ws281x = require('rpi-ws281x-native');
 const log = require('./logger');
 const consoleVisualizer = require('./console_visualizer');
+
+// Only require hardware module when not in console visualizer mode
+let ws281x;
+if (!process.env.CONSOLE_VISUALIZER) {
+    ws281x = require('rpi-ws281x-native');
+}
 
 const MIN_INTERVAL = 20
 
 let didInit = false;
+let currentBrightness = 100; // Store brightness for console visualizer
+
 function init(size) {
     if (didInit) return;
     didInit = true;
-    ws281x.init(size);
+    if (!process.env.CONSOLE_VISUALIZER && ws281x) {
+        ws281x.init(size);
+    }
 }
 
 function rgb2Int(r, g, b) {
@@ -22,8 +31,11 @@ function render(colors) {
         log('tried to render `colors` that is not an array')
         return;
     }
-    if (process.env.CONSOLE_VISUALIZER) consoleVisualizer(colors)
-    else ws281x.render(colors.map(([r, g, b]) => rgb2Int(r, g, b)));
+    if (process.env.CONSOLE_VISUALIZER) {
+        consoleVisualizer(colors, currentBrightness);
+    } else if (ws281x) {
+        ws281x.render(colors.map(([r, g, b]) => rgb2Int(r, g, b)));
+    }
 }
 
 let currentInterval
@@ -57,7 +69,10 @@ function setPattern(size, pattern) {
 }
 
 function setBrightness(level) {
-    ws281x.setBrightness(255 * (level / 100));
+    currentBrightness = level;
+    if (!process.env.CONSOLE_VISUALIZER && ws281x) {
+        ws281x.setBrightness(255 * (level / 100));
+    }
 }
 
 module.exports = { setPattern, setBrightness, init }

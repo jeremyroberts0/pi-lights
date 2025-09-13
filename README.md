@@ -42,6 +42,39 @@ The app is now running and available on port 80.  View logs with: `journalctl -u
 
 The app includes an auto update feature.  It polls github occasionally to check for changes and update itself.  You'll need to create an ssh key on your pi and add it to your Github account or to the pilights repo in order to for this to work.
 
+## Terminal Debugger
+
+Pi Lights includes a terminal debugger that allows you to develop and test patterns without physical hardware. This feature outputs LED patterns to the terminal using colored characters instead of controlling actual LEDs.
+
+### Usage
+
+Start the application in terminal debug mode:
+
+```sh
+npm run start:dev
+```
+
+Or set the environment variable manually:
+
+```sh
+CONSOLE_VISUALIZER=true node src/index.js
+```
+
+### Features
+
+- **No hardware required**: Runs on any system without needing a Raspberry Pi or LED hardware
+- **Visual pattern representation**: LED colors are rendered as colored asterisks (`*`) in the terminal
+- **Brightness simulation**: Brightness changes are reflected by dimming the terminal colors
+- **Auto-sizing**: LED count automatically matches terminal width for optimal display
+- **Real-time updates**: Animated patterns update in the terminal just like they would on physical LEDs
+
+### Use Cases
+
+- **Development**: Test new patterns without hardware
+- **Debugging**: Verify pattern logic and timing
+- **Demonstrations**: Show LED patterns on any computer
+- **Testing**: Validate brightness and color changes
+
 ## API
 
 Info
