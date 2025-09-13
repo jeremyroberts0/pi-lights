@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/jeremyroberts0/pi-lights",
   "dependencies": {
-    "chalk": "^4.1.0",
+    "chalk": "^4.1.2",
     "multicast-dns": "^7.2.2",
     "restify": "^6.3.4",
     "rpi-ws281x-native": "^0.10.1",
