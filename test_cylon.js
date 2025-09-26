@@ -2,7 +2,7 @@
 const cylon = require('./src/patterns/cylon');
 
 // Test with different strip sizes
-const sizes = [10, 20, 50];
+const sizes = [10, 20, 50, 100];
 
 sizes.forEach(size => {
     console.log(`\nTesting cylon pattern with ${size} LEDs:`);
