@@ -10,6 +10,7 @@ Features include:
 - MDNS server that enables routing to your pi on your local network via the hostname of the pi itself (the hostname of your pi is configured in the OS level)
 - Self-updating by watching the master branch at https://github.com/jeremyroberts0/pi-lights
 - Web interface wrapping the REST API for easy control on local network (note Chrome on Android does not support MDNS, so you have to navigiate via IP Address of the pi)
+- **Terminal debugger** for developing and testing patterns without hardware
 
 ## Wishlist
 
@@ -41,6 +42,53 @@ This procedure installs the app and runs it as a systemd service, which takes ca
 The app is now running and available on port 80.  View logs with: `journalctl -u pilights.service`.
 
 The app includes an auto update feature.  It polls github occasionally to check for changes and update itself.  You'll need to create an ssh key on your pi and add it to your Github account or to the pilights repo in order to for this to work.
+
+## Terminal Debugger
+
+The terminal debugger allows you to develop and test LED patterns without having physical LED hardware connected. This is particularly useful for:
+
+- Developing new patterns
+- Testing existing patterns with different LED counts
+- Debugging pattern behavior without affecting actual LED strips
+
+### Usage
+
+**Basic debug mode** (uses terminal width for LED count):
+```bash
+node src/index.js --debug
+# or
+npm run debug
+```
+
+**Debug with specific LED count**:
+```bash
+node src/index.js --debug --leds=50
+# or use predefined scripts
+npm run debug:50   # 50 LEDs
+npm run debug:100  # 100 LEDs
+npm run debug:300  # 300 LEDs
+```
+
+**Alternative using environment variable** (backwards compatible):
+```bash
+CONSOLE_VISUALIZER=true node src/index.js
+```
+
+### Debug Display
+
+The terminal debugger shows:
+- Current pattern name
+- Number of LEDs and render count
+- Colored LED visualization using colored dots (●)
+- Automatic line wrapping for long LED strips
+- Real-time updates as patterns animate
+
+### Tips
+
+- Use different terminal sizes to see how patterns look with different LED counts
+- The visualization wraps to multiple lines for long LED strips
+- All API endpoints work normally in debug mode
+- Use Ctrl+C to exit debug mode
 
 ## API
 

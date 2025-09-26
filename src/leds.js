@@ -22,8 +22,12 @@ function render(colors) {
         log('tried to render `colors` that is not an array')
         return;
     }
-    if (process.env.CONSOLE_VISUALIZER) consoleVisualizer(colors)
-    else ws281x.render(colors.map(([r, g, b]) => rgb2Int(r, g, b)));
+    // Check for terminal debug mode (env var set by --debug flag or manually)
+    if (process.env.CONSOLE_VISUALIZER) {
+        consoleVisualizer(colors)
+    } else {
+        ws281x.render(colors.map(([r, g, b]) => rgb2Int(r, g, b)));
+    }
 }
 
 let currentInterval
@@ -37,6 +41,11 @@ function setPattern(size, pattern) {
         log('pattern should be function')
     }
     clearInterval(currentInterval);
+
+    // Set pattern name for console visualizer
+    if (process.env.CONSOLE_VISUALIZER && consoleVisualizer.setCurrentPattern) {
+        consoleVisualizer.setCurrentPattern(pattern.name);
+    }
 
     const p = pattern(size)
     render(p.get())

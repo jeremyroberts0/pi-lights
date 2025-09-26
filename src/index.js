@@ -21,6 +21,21 @@ const LED_MAX_COUNT = 300;
 const startTime = new Date().toLocaleString();
 const log = require('./logger');
 
+// Parse command line arguments
+const args = process.argv.slice(2);
+const isDebugMode = args.includes('--debug');
+const ledsArg = args.find(arg => arg.startsWith('--leds='));
+const customLedCount = ledsArg ? parseInt(ledsArg.split('=')[1], 10) : null;
+
+// Set debug mode if --debug flag is present
+if (isDebugMode) {
+    process.env.CONSOLE_VISUALIZER = 'true';
+    log('Terminal debug mode enabled');
+    if (customLedCount && !isNaN(customLedCount) && customLedCount > 0) {
+        log(`Using custom LED count: ${customLedCount}`);
+    }
+}
+
 leds.init(LED_MAX_COUNT);
 
 const server = restify.createServer()
@@ -197,7 +212,15 @@ server.get('/index.html', (req, res) => {
 })
 
 server.listen(PORT, () => {
-    if (process.env.CONSOLE_VISUALIZER) currentSize = process.stdout.columns;
+    if (process.env.CONSOLE_VISUALIZER) {
+        if (customLedCount && !isNaN(customLedCount) && customLedCount > 0) {
+            currentSize = customLedCount;
+            log(`Debug mode: Using custom LED count of ${customLedCount}`);
+        } else {
+            currentSize = process.stdout.columns;
+            log(`Debug mode: Using terminal width of ${currentSize} LEDs`);
+        }
+    }
     setPattern('ready')
     log(`Server started and listening on port ${PORT}`)
 });
