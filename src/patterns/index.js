@@ -9,4 +9,5 @@ module.exports = {
     stpatricks: require('./stpatricks'),
     baby: require('./baby'),
     ukraine: require('./ukraine'),
+    cylon: require('./cylon'),
 }
