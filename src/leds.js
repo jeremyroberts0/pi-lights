@@ -8,7 +8,10 @@ let didInit = false;
 function init(size) {
     if (didInit) return;
     didInit = true;
-    ws281x.init(size);
+    // Skip hardware initialization in console visualizer mode
+    if (!process.env.CONSOLE_VISUALIZER) {
+        ws281x.init(size);
+    }
 }
 
 function rgb2Int(r, g, b) {
@@ -41,6 +44,11 @@ function setPattern(size, pattern) {
     const p = pattern(size)
     render(p.get())
     log(`rendered pattern ${pattern.name}`);
+    
+    // Store pattern name for console visualizer
+    if (process.env.CONSOLE_VISUALIZER) {
+        global.currentPatternName = pattern.name;
+    }
 
     let { interval } = p;
     if (interval < MIN_INTERVAL) {
@@ -57,7 +65,12 @@ function setPattern(size, pattern) {
 }
 
 function setBrightness(level) {
-    ws281x.setBrightness(255 * (level / 100));
+    if (process.env.CONSOLE_VISUALIZER) {
+        // Store brightness for console visualizer but don't call hardware
+        global.consoleBrightness = level;
+    } else {
+        ws281x.setBrightness(255 * (level / 100));
+    }
 }
 
 module.exports = { setPattern, setBrightness, init }

@@ -5,12 +5,23 @@ const chalk = require('chalk');
  * @param {number[3][]} colors
  */
 function consoleVisualizer(colors) {
-    const terminalChars = colors
-        .map(color => chalk.rgb(...color)('*'))
-        .reverse() // so it renders same as the led string
-        .join(''); // no spaces in terminal
+    const brightness = global.consoleBrightness || 100;
+    const brightChar = brightness > 75 ? '█' : brightness > 50 ? '▇' : brightness > 25 ? '▆' : brightness > 0 ? '▅' : '░';
+    
+    // For long LED strips, wrap at terminal width
+    const terminalWidth = process.stdout.columns || 80;
+    const colorChars = colors.map(color => chalk.rgb(...color)(brightChar)).reverse();
+    
     console.clear();
-    console.log(terminalChars);
+    
+    // Display LED strip with wrapping for long strips
+    let output = '';
+    for (let i = 0; i < colorChars.length; i += terminalWidth) {
+        output += colorChars.slice(i, i + terminalWidth).join('') + '\n';
+    }
+    
+    console.log(output);
+    console.log(`LEDs: ${colors.length} | Brightness: ${brightness}% | Pattern: ${global.currentPatternName || 'unknown'}`);
 }
 
 module.exports = consoleVisualizer;

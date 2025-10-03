@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "start:dev": "NO_UPDATE=true PORT=8080 CONSOLE_VISUALIZER=true node --inspect src/index.js",
+    "debug": "CONSOLE_VISUALIZER=true PORT=8080 node src/index.js",
     "test": "npm run test:lint",
     "test:lint": "eslint --fix **/*.js",
     "build:prod": "NODE_ENV=production npm install --only=production"
