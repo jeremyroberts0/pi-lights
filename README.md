@@ -7,6 +7,7 @@ Pi Lights is an app for controlling a strip of individually addressable LEDs acc
 Features include:
 
 - REST API for controller patterns and brightness (see API docs below)
+- Terminal debugger for testing patterns without hardware (see Development section)
 - MDNS server that enables routing to your pi on your local network via the hostname of the pi itself (the hostname of your pi is configured in the OS level)
 - Self-updating by watching the master branch at https://github.com/jeremyroberts0/pi-lights
 - Web interface wrapping the REST API for easy control on local network (note Chrome on Android does not support MDNS, so you have to navigiate via IP Address of the pi)
@@ -41,6 +42,41 @@ This procedure installs the app and runs it as a systemd service, which takes ca
 The app is now running and available on port 80.  View logs with: `journalctl -u pilights.service`.
 
 The app includes an auto update feature.  It polls github occasionally to check for changes and update itself.  You'll need to create an ssh key on your pi and add it to your Github account or to the pilights repo in order to for this to work.
+
+## Development
+
+### Terminal Debugger
+
+For development and testing patterns without actual LED hardware, you can run the app in terminal debug mode. This displays the LED patterns as colored characters in your terminal.
+
+**Quick Start:**
+```sh
+npm run debug
+```
+
+**Manual Mode:**
+```sh
+CONSOLE_VISUALIZER=true node src/index.js
+```
+
+**Features:**
+- LED patterns displayed as colored Unicode block characters (█▇▆▅░)
+- Brightness visualization using different character densities
+- Automatic LED count sizing to terminal width
+- Pattern and status information display
+- No hardware dependencies - safe to run on any machine
+
+**Example Output:**
+```
+██▇▆▅░░▅▆▇██▇▆▅░░▅▆▇██▇▆▅░░▅▆▇██
+LEDs: 80 | Brightness: 75% | Pattern: rainbow
+```
+
+**Development with Inspector:**
+```sh
+npm run start:dev
+```
+This includes the terminal debugger plus Node.js inspector for debugging.
 
 ## API
 
