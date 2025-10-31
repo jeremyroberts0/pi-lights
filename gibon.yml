@@ -1,0 +1,4 @@
+# Commands used by the gibon autonomous coding agent to validate work during coding sessions
+dependencies: npm ci # Install Node.js dependencies from lock file
+lint: npm run test:lint # Run ESLint with auto-fix on all JavaScript files
+unit: npm test # Run all tests (currently just linting)
