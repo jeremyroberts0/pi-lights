@@ -10,4 +10,5 @@ module.exports = {
     baby: require('./baby'),
     ukraine: require('./ukraine'),
     cylon: require('./cylon'),
+    lightsaber: require('./lightsaber'),
 }
