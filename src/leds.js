@@ -1,3 +1,5 @@
+// rpi-ws281x-native is an optional native module; only available on Raspberry Pi hardware
+// eslint-disable-next-line import/no-unresolved
 const ws281x = require('rpi-ws281x-native');
 const log = require('./logger');
 const consoleVisualizer = require('./console_visualizer');
