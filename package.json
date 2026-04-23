@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "simulate": "CONSOLE_VISUALIZER=true node src/index.js",
     "start:dev": "NO_UPDATE=true PORT=8080 CONSOLE_VISUALIZER=true node --inspect src/index.js",
     "test": "npm run test:lint",
     "test:lint": "eslint --fix **/*.js",
@@ -23,7 +24,7 @@
   "dependencies": {
     "chalk": "^4.1.0",
     "multicast-dns": "^7.2.2",
-    "restify": "^6.3.4",
+    "restify": "^6.4.0",
     "rpi-ws281x-native": "^0.10.1",
     "simple-git": "^2.31.0"
   },

@@ -1,5 +1,3 @@
-
-
 const restify = require('restify')
 
 const patterns = require('./patterns');
@@ -21,10 +19,6 @@ const LED_MAX_COUNT = 300;
 const startTime = new Date().toLocaleString();
 const log = require('./logger');
 
-leds.init(LED_MAX_COUNT);
-
-const server = restify.createServer()
-
 // App State
 let lastPattern;
 let lastBrightness;
@@ -34,6 +28,26 @@ const persistenceDir = path.resolve(__dirname, 'persistence');
 const lastPatternDir = path.resolve(persistenceDir, 'lastPattern');
 const lastBrightnessDir = path.resolve(persistenceDir, 'lastBrightness');
 const lastSizeDir = path.resolve(persistenceDir, 'lastSize');
+
+// Determine LED strip size
+if (process.env.CONSOLE_VISUALIZER) {
+    currentSize = process.stdout.columns;
+} else {
+    try {
+        let priorSize = fs.readFileSync(lastSizeDir, 'utf8');
+        priorSize = parseInt(priorSize, 10);
+        if (isNaN(priorSize) || priorSize < 0) throw new Error('invalid size in persistent state');
+        log('restoring prior size', priorSize);
+        currentSize = priorSize;
+    } catch (err) {
+        log('error restoring size, using default');
+        currentSize = LED_MAX_COUNT;
+    }
+}
+
+leds.init(currentSize);
+
+const server = restify.createServer()
 
 function saveState() {
     try {
@@ -77,17 +91,6 @@ function setPattern(pattern) {
 }
 
 // Restore prior state
-try {
-    let priorSize = fs.readFileSync(lastSizeDir, 'utf8');
-    priorSize = parseInt(priorSize, 10);
-    if (isNaN(priorSize) || priorSize < 0) throw new Error('invalid size in persistent state');
-    log('restoring prior size', priorSize);
-    currentSize = priorSize;
-} catch (err) {
-    log('error restoring size', err);
-    currentSize = LED_MAX_COUNT;
-}
-
 try {
     let priorBrightness = fs.readFileSync(lastBrightnessDir, 'utf8');
     priorBrightness = parseInt(priorBrightness, 10);
@@ -197,7 +200,6 @@ server.get('/index.html', (req, res) => {
 })
 
 server.listen(PORT, () => {
-    if (process.env.CONSOLE_VISUALIZER) currentSize = process.stdout.columns;
     setPattern('ready')
     log(`Server started and listening on port ${PORT}`)
 });
